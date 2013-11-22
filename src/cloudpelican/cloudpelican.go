@@ -9,10 +9,13 @@ import (
     "log"
 )
 
+// Settings
+const ENDPOINT string = "https://app.cloudpelican.com/api/push/pixel"
+
 // Write a message
 func LogMessage(token string, msg string) bool {
-    // @todo
-    return false
+    var res bool = requestAsync(ENDPOINT)
+    return res
 }
 
 // Request a sync
