@@ -9,15 +9,18 @@ import (
     "log"
 )
 
+// Token
+const TOKEN string = "123456"
+
 // Example
 func main() {
     var msg string = "This is a log message"
 
     // Write message and validate
-    res := cloudpelican.LogMessage("12345", msg)
+    res := cloudpelican.LogMessage(TOKEN, msg)
     if !res {
         log.Println("Something went wrong")
     } else {
-        log.Printf("Written data to backend: %s\n", msg)
+        log.Printf("Written %d bytes of data '%s' to backend.\n", len(msg), msg)
     }
 }
