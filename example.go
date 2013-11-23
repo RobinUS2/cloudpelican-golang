@@ -5,7 +5,7 @@ package main
 
 // Imports
 import (
-    "cloudpelican"
+    "github.com/RobinUS2/cloudpelican-golang/cloudpelican"
     "log"
     "strconv"
 )
