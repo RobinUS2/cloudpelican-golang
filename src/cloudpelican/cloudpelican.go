@@ -36,8 +36,7 @@ func Drain() bool {
     return true
 }
 
-// Request a sync
-// @todo Make sure all are pushed to backend before application shuts down
+// Request async
 func requestAsync(url string) bool {
     // Add counter
     startCounterMux.Lock()
