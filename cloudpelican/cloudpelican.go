@@ -139,7 +139,19 @@ func requestAsync(url string) bool {
 // Backend writer
 func backendWriter() {
     go func() {
-        transport := &http.Transport{
+        // Wait for messages
+        for {
+            // Read from channel
+            var url string
+            url = <- writeAhead
+
+            // Make request
+            if debugMode {
+                log.Println(url)
+            }
+
+            // Client
+            transport := &http.Transport{
 		Dial: func(netw, addr string) (net.Conn, error) {
 			// we want to wait a maximum of 1.75 seconds...
 			// since we're specifying a 1 second connect timeout and deadline 
@@ -153,18 +165,8 @@ func backendWriter() {
 			c.SetDeadline(deadline)
 			return c, nil
 		}}
-	httpclient := &http.Client{Transport: transport}
-        
-        // Wait for messages
-        for {
-            // Read from channel
-            var url string
-            url = <- writeAhead
+            httpclient := &http.Client{Transport: transport}
 
-            // Make request
-            if debugMode {
-                log.Println(url)
-            }
             _, err := httpclient.Get(url)
             if err != nil {
                 log.Printf("Error while forwarding data: %s\n", err)
