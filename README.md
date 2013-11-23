@@ -12,7 +12,10 @@ The usage of this lightweight library is very straightforward. Make sure you hav
 
 2. In your code: import "github.com/RobinUS2/cloudpelican-golang/cloudpelican"
 
-3. To write a log message: cloudpelican.LogMessage("This is your log message")
+3. To write a log message: 
+```go
+cloudpelican.LogMessage("This is your log message")
+```
 
 CloudPelican
 ===================
