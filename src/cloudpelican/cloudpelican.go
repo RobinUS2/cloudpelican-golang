@@ -29,6 +29,7 @@ var doneCounterMux sync.Mutex
 var writeAheadBufferSize int = 1000
 var writeAhead chan string = make(chan string, writeAheadBufferSize)
 var writeAheadInit bool
+var dropOnFullWriteAheadBuffer bool = true
 
 // Set token
 func SetToken(t string) {
@@ -103,7 +104,13 @@ func assembleUrl(t string, fields map[string]string) string {
 
 // Request async
 func requestAsync(url string) bool {
-    // @todo Check amount of open items in the channel, if the channel is full, return false and drop this message
+    // Check amount of open items in the channel, if the channel is full, return false and drop this message
+    if dropOnFullWriteAheadBuffer {
+        var lwa int = len(writeAhead)
+        if lwa == writeAheadBufferSize {
+            log.Printf("Write ahead buffer is full and contains %d items. Dropping current log message", lwa)
+        }
+    }
 
     // Add counter
     startCounterMux.Lock()
