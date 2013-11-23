@@ -17,6 +17,7 @@ import (
 var ENDPOINT string = "https://app.cloudpelican.com/api/push/pixel"
 var TOKEN string = ""
 var backendTimeout = time.Duration(5 * time.Second)
+var debugMode = false
 
 // Monitor drain status
 var routineQuit chan int = make(chan int)
@@ -156,8 +157,10 @@ func backendWriter() {
             url = <- writeAhead
 
             // Make request
+            if debugMode {
+                log.Println(url)
+            }
             _, err := httpclient.Get(url)
-            log.Println(url)
             if err != nil {
                 log.Printf("Error while forwarding data: %s\n", err)
             }
