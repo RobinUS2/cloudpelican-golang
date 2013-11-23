@@ -21,6 +21,11 @@ var startCounterMux sync.Mutex
 var doneCounter uint64 = uint64(0)
 var doneCounterMux sync.Mutex
 
+// Log queue
+var writeAheadBufferSize int = 1000
+var writeAhead chan string = make(chan string, writeAheadBufferSize)
+var writeAheadInit bool
+
 // Set token
 func SetToken(t string) {
     // Validate before setting
@@ -67,26 +72,45 @@ func requestAsync(url string) bool {
     startCounter++
     startCounterMux.Unlock()
 
-    // Launch
+    // Insert into channel
+    writeAhead <- url
+
+    // Do we have to start a writer?
+    if writeAheadInit == false {
+        writeAheadInit = true
+        backendWriter()
+    }
+
+    // OK
+    return true
+}
+
+// Backend writer
+func backendWriter() {
     go func() {
-        // Request url
-        _, err := http.Get(url)
-        log.Println(url)
-	if err != nil {
-            log.Printf("Error while forwarding data: %s\n", err)
-        }
+        for {
+            // Read from channel
+            var url string
+            url = <- writeAhead
 
-        // Done counter
-        doneCounterMux.Lock()
-        doneCounter++
-        doneCounterMux.Unlock()
+            // Make request
+            _, err := http.Get(url)
+            log.Println(url)
+            if err != nil {
+                log.Printf("Error while forwarding data: %s\n", err)
+            }
 
-        // Check whether dif between started and done is = 0, if so, drop a message in the routineQuit
-        if (doneCounter >= startCounter) {
-            routineQuit <- 1
+            // Done counter
+            doneCounterMux.Lock()
+            doneCounter++
+            doneCounterMux.Unlock()
+
+            // Check whether dif between started and done is = 0, if so, drop a message in the routineQuit
+            if (doneCounter >= startCounter) {
+                routineQuit <- 1
+            }
         }
     }()
-    return true
 }
 
 // Validate the token
