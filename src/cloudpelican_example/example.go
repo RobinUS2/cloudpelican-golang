@@ -23,4 +23,7 @@ func main() {
     } else {
         log.Printf("Written %d bytes of data '%s' to backend.\n", len(msg), msg)
     }
+
+    // Make sure any pending messages are written to the backend
+    cloudpelican.Drain()
 }

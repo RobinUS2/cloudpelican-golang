@@ -7,17 +7,18 @@ package cloudpelican
 import (
     "net/http"
     "log"
+    "sync"
 )
 
 // Settings
 const ENDPOINT string = "https://app.cloudpelican.com/api/push/pixel"
 
 // Monitor drain status
-routineQuit chan int = make(chan int)
-startCounter uint64 = uint64(0)
-startCounterMux sync.Mutex
-doneCounter uint64 = uint64(0)
-doneCounterMux sync.Mutex
+var routineQuit chan int = make(chan int)
+var startCounter uint64 = uint64(0)
+var startCounterMux sync.Mutex
+var doneCounter uint64 = uint64(0)
+var doneCounterMux sync.Mutex
 
 // Write a message
 func LogMessage(token string, msg string) bool {
@@ -32,6 +33,7 @@ func Drain() bool {
     if startCounter > doneCounter {
         <-routineQuit
     }
+    return true
 }
 
 // Request a sync
@@ -39,7 +41,7 @@ func Drain() bool {
 func requestAsync(url string) bool {
     // Add counter
     startCounterMux.Lock()
-    startcounter++
+    startCounter++
     startCounterMux.Unlock()
 
     // Launch
@@ -54,8 +56,12 @@ func requestAsync(url string) bool {
         // Done counter
         doneCounterMux.Lock()
         doneCounter++
-        doneCounter.Unlock()
-        // @todo Check whether dif between started and done is = 0, if so, drop a message in the routineQuit
+        doneCounterMux.Unlock()
+
+        // Check whether dif between started and done is = 0, if so, drop a message in the routineQuit
+        if (doneCounter >= startCounter) {
+            routineQuit <- 1
+        }
     }()
     return true
 }
