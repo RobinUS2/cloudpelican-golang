@@ -180,6 +180,7 @@ func backendWriter() {
                 routineQuit <- 1
             }
         }
+        log.Printf("here")
     }()
 }
 

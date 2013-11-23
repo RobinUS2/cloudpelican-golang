@@ -8,12 +8,16 @@ import (
     "github.com/RobinUS2/cloudpelican-golang/cloudpelican"
     "log"
     "fmt"
+    "time"
 )
 
 // Example
 func main() {
     // Token
-    cloudpelican.SetToken("123456")
+    cloudpelican.SetToken("12345")
+
+    // More verbose
+    cloudpelican.SetDebugMode(true)
 
     // Basic message
     var msg string = "This is a log message %d"
@@ -23,7 +27,7 @@ func main() {
         // Basic message with a sequence number for esting purposes
         parsedMsg := fmt.Sprintf(msg, i)
         res := cloudpelican.LogMessage(parsedMsg)
-
+        time.Sleep(3000 * time.Millisecond)
         // Validate the writing
         if !res {
             log.Println("Something went wrong")
