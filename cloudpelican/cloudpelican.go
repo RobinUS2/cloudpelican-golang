@@ -123,14 +123,14 @@ func requestAsync(url string) bool {
     startCounter++
     startCounterMux.Unlock()
 
-    // Insert into channel
-    writeAhead <- url
-
     // Do we have to start a writer?
     if writeAheadInit == false {
         writeAheadInit = true
         backendWriter()
     }
+
+    // Insert into channel
+    writeAhead <- url
 
     // OK
     return true
@@ -164,6 +164,7 @@ func backendWriter() {
 
             // Make request
             if debugMode {
+                log.Printf("Write ahead queue %d\n", len(writeAhead))
                 log.Println(url)
             }
             _, err := httpclient.Get(url)

@@ -19,6 +19,8 @@ func main() {
     // More verbose
     cloudpelican.SetDebugMode(true)
 
+    time.Sleep(1000 * time.Millisecond)
+
     // Basic message
     var msg string = "This is a log message %d"
 
@@ -27,7 +29,7 @@ func main() {
         // Basic message with a sequence number for esting purposes
         parsedMsg := fmt.Sprintf(msg, i)
         res := cloudpelican.LogMessage(parsedMsg)
-        time.Sleep(3000 * time.Millisecond)
+        time.Sleep(1000 * time.Millisecond)
         // Validate the writing
         if !res {
             log.Println("Something went wrong")
