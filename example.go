@@ -14,7 +14,7 @@ import (
 // Example
 func main() {
     // Token
-    cloudpelican.SetToken("EIg8WOP5Mtr7pyeNappk7uwgN0k4UZzr")
+    cloudpelican.SetToken("12345")
 
     // More verbose
     cloudpelican.SetDebugMode(true)
