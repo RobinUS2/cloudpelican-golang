@@ -13,3 +13,17 @@ The usage of this lightweight library is very straightforward. Make sure you hav
 2. In your code: import "github.com/RobinUS2/cloudpelican-golang/cloudpelican"
 
 3. To write a log message: cloudpelican.LogMessage("This is your log message")
+
+CloudPelican
+===================
+
+CloudPelican provides insights into distributed datasources from servers, applications, websites, mobile apps, etc. 
+
+http://cloudpelican.com/
+
+Author
+===================
+
+This library is written by Robin Verlangen, founder of CloudPelican.
+
+http://robinverlangen.nl/
