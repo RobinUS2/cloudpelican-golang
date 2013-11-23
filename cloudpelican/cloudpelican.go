@@ -160,7 +160,9 @@ func backendWriter() {
                 log.Println(url)
             }
             resp, err := httpclient.Get(url)
-            defer resp.Body.Close()
+            if resp != nil && resp.Body != nil {
+                defer resp.Body.Close()
+            }
             if err != nil {
                 log.Printf("Error while forwarding data: %s\n", err)
             }
