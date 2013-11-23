@@ -52,6 +52,11 @@ func SetBackendTimeout(to time.Duration) {
     backendTimeout = to
 }
 
+// Debug
+func SetDebugMode(b bool) {
+    debugMode = b
+}
+
 // Write a message
 func LogMessageWithToken(t string, msg string) bool {
     // Create fields map
