@@ -138,7 +138,7 @@ func requestAsync(url string) bool {
 
 // Backend writer
 func backendWriter() {
-    //go func() {
+    go func() {
         // Wait for messages
         for {
             // Read from channel
@@ -183,7 +183,7 @@ func backendWriter() {
             }
         }
         log.Printf("here")
-    //}()
+    }()
 }
 
 // Timeout helper
