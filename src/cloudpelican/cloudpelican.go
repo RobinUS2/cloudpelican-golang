@@ -89,6 +89,8 @@ func assembleUrl(t string, fields map[string]string) string {
 
 // Request async
 func requestAsync(url string) bool {
+    // @todo Check amount of open items in the channel, if the channel is full, return false and drop this message
+
     // Add counter
     startCounterMux.Lock()
     startCounter++
@@ -116,6 +118,7 @@ func backendWriter() {
             url = <- writeAhead
 
             // Make request
+            // @todo Add timeout
             _, err := http.Get(url)
             log.Println(url)
             if err != nil {
