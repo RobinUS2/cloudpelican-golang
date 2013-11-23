@@ -180,7 +180,7 @@ func backendWriter() {
 
             // Check whether dif between started and done is = 0, if so, drop a message in the routineQuit
             if (doneCounter >= startCounter) {
-                routineQuit <- 1
+                //routineQuit <- 1
             }
         }
         log.Printf("here")
