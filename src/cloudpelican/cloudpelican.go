@@ -5,15 +5,18 @@ package cloudpelican
 
 // Imports
 import (
+    "net"
     "net/http"
     "net/url"
     "log"
     "sync"
+    "time"
 )
 
 // Settings
-const ENDPOINT string = "https://app.cloudpelican.com/api/push/pixel"
-var token string = ""
+var ENDPOINT string = "https://app.cloudpelican.com/api/push/pixel"
+var TOKEN string = ""
+var backendTimeout = time.Duration(5 * time.Second)
 
 // Monitor drain status
 var routineQuit chan int = make(chan int)
@@ -30,10 +33,10 @@ var writeAheadInit bool
 // Set token
 func SetToken(t string) {
     // Validate before setting
-    validateToken(token)
+    validateToken(t)
     
     // Store
-    token = t
+    TOKEN = t
 }
 
 // Write a message
@@ -53,7 +56,7 @@ func LogMessage(msg string) bool {
     fields["msg"] = msg
 
     // Push to channel
-    return requestAsync(assembleUrl(token, fields))
+    return requestAsync(assembleUrl(TOKEN, fields))
 }
 
 // Drain: wait for all data pushes to finish
@@ -112,14 +115,24 @@ func requestAsync(url string) bool {
 // Backend writer
 func backendWriter() {
     go func() {
+        // Transport
+        transport := http.Transport{
+            Dial: dialTimeout,
+        }
+
+        // Client
+        client := http.Client{
+            Transport: &transport,
+        }
+        
+        // Wait for messages
         for {
             // Read from channel
             var url string
             url = <- writeAhead
 
             // Make request
-            // @todo Add timeout
-            _, err := http.Get(url)
+            _, err := client.Get(url)
             log.Println(url)
             if err != nil {
                 log.Printf("Error while forwarding data: %s\n", err)
@@ -136,6 +149,11 @@ func backendWriter() {
             }
         }
     }()
+}
+
+// Timeout helper
+func dialTimeout(network, addr string) (net.Conn, error) {
+    return net.DialTimeout(network, addr, backendTimeout)
 }
 
 // Validate the token
