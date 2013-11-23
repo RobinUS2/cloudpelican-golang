@@ -12,6 +12,7 @@ import (
 
 // Settings
 const ENDPOINT string = "https://app.cloudpelican.com/api/push/pixel"
+var token string = ""
 
 // Monitor drain status
 var routineQuit chan int = make(chan int)
@@ -20,8 +21,31 @@ var startCounterMux sync.Mutex
 var doneCounter uint64 = uint64(0)
 var doneCounterMux sync.Mutex
 
+// Set token
+func SetToken(t string) {
+    // Validate before setting
+    validateToken(token)
+    
+    // Store
+    token = t
+}
+
 // Write a message
-func LogMessage(token string, msg string) bool {
+func LogMessageWithToken(t string, msg string) bool {
+    // Token check
+    validateToken(t)
+    
+    // @todo Write seperate func for url assembly, encoding, etc
+    // @todo Validate
+    var res bool = requestAsync(ENDPOINT + "?t=" + t + "&f[msg]=" + msg)
+    return res
+}
+
+// Write a message
+func LogMessage(msg string) bool {
+    // Token check
+    validateToken(token)
+    
     // @todo Write seperate func for url assembly, encoding, etc
     // @todo Validate
     var res bool = requestAsync(ENDPOINT + "?t=" + token + "&f[msg]=" + msg)
@@ -63,4 +87,11 @@ func requestAsync(url string) bool {
         }
     }()
     return true
+}
+
+// Validate the token
+func validateToken(t string) {
+    if len(t) == 0 {
+        log.Println("Please set a valid token with cloudpelican.SetToken(token string)")
+    }
 }
