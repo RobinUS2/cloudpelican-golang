@@ -134,10 +134,6 @@ func backendWriter() {
         // Client
         transport := &http.Transport{
             Dial: func(netw, addr string) (net.Conn, error) {
-                    // we want to wait a maximum of 1.75 seconds...
-                    // since we're specifying a 1 second connect timeout and deadline 
-                    // (read/write timeout) is specified in absolute time we want to 
-                    // calculate that time first (before connecting)
                     deadline := time.Now().Add(backendTimeout)
                     c, err := net.DialTimeout(netw, addr, time.Second)
                     if err != nil {
