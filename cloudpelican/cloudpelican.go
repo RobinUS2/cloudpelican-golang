@@ -77,14 +77,6 @@ func LogMessage(msg string) bool {
     return requestAsync(assembleUrl(TOKEN, fields))
 }
 
-// Drain: wait for all data pushes to finish
-func Drain() bool {
-    if startCounter > doneCounter {
-        <-routineQuit
-    }
-    return true
-}
-
 // Assemble url
 // @return string Url based on the input fields
 func assembleUrl(t string, fields map[string]string) string {
@@ -177,13 +169,8 @@ func backendWriter() {
             doneCounterMux.Lock()
             doneCounter++
             doneCounterMux.Unlock()
-
-            // Check whether dif between started and done is = 0, if so, drop a message in the routineQuit
-            if (doneCounter >= startCounter) {
-                //routineQuit <- 1
-            }
         }
-        log.Printf("here")
+        log.Printf("Stopping backend writer")
     }()
 }
 
