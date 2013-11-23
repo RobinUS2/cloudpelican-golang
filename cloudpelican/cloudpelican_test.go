@@ -4,7 +4,7 @@ package cloudpelican
 // Test the CloudPelican for Go libraby
 
 import "testing"
-import "cloudpelican"
+import "github.com/RobinUS2/cloudpelican-golang/cloudpelican"
 
 // Test log message
 func TestLogMessage(t *testing.T) {
