@@ -139,6 +139,23 @@ func requestAsync(url string) bool {
 // Backend writer
 func backendWriter() {
     go func() {
+        // Client
+        transport := &http.Transport{
+            Dial: func(netw, addr string) (net.Conn, error) {
+                    // we want to wait a maximum of 1.75 seconds...
+                    // since we're specifying a 1 second connect timeout and deadline 
+                    // (read/write timeout) is specified in absolute time we want to 
+                    // calculate that time first (before connecting)
+                    deadline := time.Now().Add(backendTimeout)
+                    c, err := net.DialTimeout(netw, addr, time.Second)
+                    if err != nil {
+                            return nil, err
+                    }
+                    c.SetDeadline(deadline)
+                    return c, nil
+            }}
+        httpclient := &http.Client{Transport: transport}
+
         // Wait for messages
         for {
             // Read from channel
@@ -149,25 +166,8 @@ func backendWriter() {
             if debugMode {
                 log.Println(url)
             }
-
-            // Client
-            transport := &http.Transport{
-		Dial: func(netw, addr string) (net.Conn, error) {
-			// we want to wait a maximum of 1.75 seconds...
-			// since we're specifying a 1 second connect timeout and deadline 
-			// (read/write timeout) is specified in absolute time we want to 
-			// calculate that time first (before connecting)
-			deadline := time.Now().Add(backendTimeout)
-			c, err := net.DialTimeout(netw, addr, time.Second)
-			if err != nil {
-				return nil, err
-			}
-			c.SetDeadline(deadline)
-			return c, nil
-		}}
-            httpclient := &http.Client{Transport: transport}
-
             _, err := httpclient.Get(url)
+            defer httpclient.Body.Close()
             if err != nil {
                 log.Printf("Error while forwarding data: %s\n", err)
             }
