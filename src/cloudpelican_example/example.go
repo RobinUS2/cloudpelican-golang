@@ -10,13 +10,10 @@ import (
     "strconv"
 )
 
-// Token
-const TOKEN string = "123456"
-
 // Example
 func main() {
     // Token
-    cloudpelican.SetToken(TOKEN)
+    cloudpelican.SetToken("123456")
 
     // Basic message
     var msg string = "This is a log message"

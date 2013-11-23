@@ -39,6 +39,17 @@ func SetToken(t string) {
     TOKEN = t
 }
 
+// Set endpoint
+func SetEndpoint(e string) {
+    // Store
+    ENDPOINT = e
+}
+
+// Set timeout
+func SetBackendTimeout(to time.Duration) {
+    backendTimeout = to
+}
+
 // Write a message
 func LogMessageWithToken(t string, msg string) bool {
     // Create fields map
@@ -115,15 +126,21 @@ func requestAsync(url string) bool {
 // Backend writer
 func backendWriter() {
     go func() {
-        // Transport
-        transport := http.Transport{
-            Dial: dialTimeout,
-        }
-
-        // Client
-        client := http.Client{
-            Transport: &transport,
-        }
+        transport := &http.Transport{
+		Dial: func(netw, addr string) (net.Conn, error) {
+			// we want to wait a maximum of 1.75 seconds...
+			// since we're specifying a 1 second connect timeout and deadline 
+			// (read/write timeout) is specified in absolute time we want to 
+			// calculate that time first (before connecting)
+			deadline := time.Now().Add(backendTimeout)
+			c, err := net.DialTimeout(netw, addr, time.Second)
+			if err != nil {
+				return nil, err
+			}
+			c.SetDeadline(deadline)
+			return c, nil
+		}}
+	httpclient := &http.Client{Transport: transport}
         
         // Wait for messages
         for {
@@ -132,7 +149,7 @@ func backendWriter() {
             url = <- writeAhead
 
             // Make request
-            _, err := client.Get(url)
+            _, err := httpclient.Get(url)
             log.Println(url)
             if err != nil {
                 log.Printf("Error while forwarding data: %s\n", err)
