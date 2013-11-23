@@ -6,6 +6,7 @@ package cloudpelican
 // Imports
 import (
     "net/http"
+    "net/url"
     "log"
     "sync"
 )
@@ -37,24 +38,22 @@ func SetToken(t string) {
 
 // Write a message
 func LogMessageWithToken(t string, msg string) bool {
-    // Token check
-    validateToken(t)
-    
-    // @todo Write seperate func for url assembly, encoding, etc
-    // @todo Validate
-    var res bool = requestAsync(ENDPOINT + "?t=" + t + "&f[msg]=" + msg)
-    return res
+    // Create fields map
+    var fields map[string]string = make(map[string]string)
+    fields["msg"] = msg
+
+    // Push to channel
+    return requestAsync(assembleUrl(t, fields))
 }
 
 // Write a message
 func LogMessage(msg string) bool {
-    // Token check
-    validateToken(token)
-    
-    // @todo Write seperate func for url assembly, encoding, etc
-    // @todo Validate
-    var res bool = requestAsync(ENDPOINT + "?t=" + token + "&f[msg]=" + msg)
-    return res
+    // Create fields map
+    var fields map[string]string = make(map[string]string)
+    fields["msg"] = msg
+
+    // Push to channel
+    return requestAsync(assembleUrl(token, fields))
 }
 
 // Drain: wait for all data pushes to finish
@@ -63,6 +62,29 @@ func Drain() bool {
         <-routineQuit
     }
     return true
+}
+
+// Assemble url
+// @return string Url based on the input fields
+func assembleUrl(t string, fields map[string]string) string {
+    // Token check
+    validateToken(t)
+
+    // Baisc query params
+    params := url.Values{}
+    params.Add("t", t)
+
+    // Fields
+    for k, _ := range fields {
+        if len(k) == 0 || len(fields[k]) == 0 {
+            log.Printf("Skipping invalid field %s with value %s", k, fields[k])
+            continue
+        }
+        params.Add("f[" + k + "]", fields[k])
+    }
+
+    // Final url
+    return ENDPOINT + "?" + params.Encode()
 }
 
 // Request async
