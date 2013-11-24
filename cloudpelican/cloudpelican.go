@@ -28,7 +28,7 @@ var doneCounterMux sync.Mutex
 
 // Log queue
 var writeAheadBufferSize int = 1000
-var writeAhead chan string = make(chan url.Values, writeAheadBufferSize)
+var writeAhead chan url.Values = make(chan url.Values, writeAheadBufferSize)
 var writeAheadInit bool
 var dropOnFullWriteAheadBuffer bool = true
 
