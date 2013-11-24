@@ -127,7 +127,7 @@ func backendWriter() {
 
         // Wait for messages
         var urlParams url.Values
-        var currentEventCount int = 0
+        var currentEventCount uint64 = uint64(0)
         for {
             // Read from channel
             var fields map[string]string
