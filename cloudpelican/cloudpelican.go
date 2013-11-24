@@ -28,7 +28,7 @@ var doneCounterMux sync.Mutex
 
 // Log queue
 var writeAheadBufferSize int = 1000
-var writeAhead chan url.Values = make(chan url.Values, writeAheadBufferSize)
+var writeAhead chan map[string]string = make(chan map[string]string, writeAheadBufferSize)
 var writeAheadInit bool
 var dropOnFullWriteAheadBuffer bool = true
 
@@ -60,16 +60,16 @@ func SetDebugMode(b bool) {
 // Write a message
 func LogMessage(msg string) bool {
     // Create fields map
-    params := url.Values{}
-    params.Add("__token__", TOKEN)
-    params.Add("msg", msg)
+    params := make map[string]string
+    params["__token__"] = TOKEN
+    params["msg"] = msg
 
     // Push to channel
     return requestAsync(params)
 }
 
 // Request async
-func requestAsync(params url.Values) bool {
+func requestAsync(params map[string]string) bool {
     // Check amount of open items in the channel, if the channel is full, return false and drop this message
     if dropOnFullWriteAheadBuffer {
         var lwa int = len(writeAhead)
@@ -117,14 +117,14 @@ func backendWriter() {
         var currentEventCount int = 0
         for {
             // Read from channel
-            var params url.Values
-            params = <- writeAhead
+            var fields map[string]string
+            fields = <- writeAhead
 
             // Populate url params
             if urlParams == nil {
                 urlParams := url.Values{}
             }
-            for k, _ := range params {
+            for k, _ := range fields {
                 if k == "__token__" {
                     // Token
                     urlParams.Add("t", params[k]);
