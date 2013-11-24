@@ -19,7 +19,8 @@ import (
 var ENDPOINT string = "https://app.cloudpelican.com/api"
 var TOKEN string = ""
 var backendTimeout = time.Duration(5 * time.Second)
-var debugMode = false
+var debugMode bool = false
+var maxBulkSize int = 100
 
 // Monitor drain status
 var startCounter uint64 = uint64(0)
@@ -137,8 +138,9 @@ func backendWriter() {
 
             // Queue length
             var qLen = len(writeAhead)
-            if qLen > 0 {
+            if qLen > 0 && currentEventCount < maxBulkSize {
                 // There is more in the current queue, bulk request
+                continue
             }
 
             // Assemble url

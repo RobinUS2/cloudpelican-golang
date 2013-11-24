@@ -14,7 +14,8 @@ import (
 // Example
 func main() {
     // Token
-    cloudpelican.SetToken("12345")
+    cloudpelican.SetToken("EIg8WOP5Mtr7pyeNappk7uwgN0k4UZzr")
+    cloudpelican.SetEndpoint("https://appdev.cloudpelican.com/api")
 
     // More verbose
     cloudpelican.SetDebugMode(true)
@@ -29,7 +30,7 @@ func main() {
         // Basic message with a sequence number for esting purposes
         parsedMsg := fmt.Sprintf(msg, i)
         res := cloudpelican.LogMessage(parsedMsg)
-        time.Sleep(1000 * time.Millisecond)
+        //time.Sleep(1000 * time.Millisecond)
         // Validate the writing
         if !res {
             log.Println("Something went wrong")
@@ -37,4 +38,7 @@ func main() {
             log.Printf("Written %d bytes of data '%s' to backend.\n", len(parsedMsg), parsedMsg)
         }
     }
+
+    // Sleep
+    time.Sleep(1000 * time.Millisecond)
 }
