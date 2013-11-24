@@ -181,7 +181,7 @@ func backendWriter() {
             currentEventCount = 0
 
             // Are we draining the system?
-            if isDraining && doneCount >= startCounter {
+            if isDraining && doneCounter >= startCounter {
                 // Flag the drained channel
                 drained <- true
             }
