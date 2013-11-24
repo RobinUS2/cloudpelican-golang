@@ -8,18 +8,15 @@ import (
     "github.com/RobinUS2/cloudpelican-golang/cloudpelican"
     "log"
     "fmt"
-    "time"
 )
 
 // Example
 func main() {
     // Token
-    cloudpelican.SetToken("12345")
+    cloudpelican.SetToken("YOUR_TOKEN_HERE")
 
     // More verbose
     cloudpelican.SetDebugMode(true)
-
-    time.Sleep(1000 * time.Millisecond)
 
     // Basic message
     var msg string = "This is a log message %d"
