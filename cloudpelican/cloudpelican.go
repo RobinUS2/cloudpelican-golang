@@ -118,7 +118,7 @@ func backendWriter() {
             var params url.Values
             params = <- writeAhead
 
-            var url string := ENDPOINT + "?" + params.Encode()
+            var url string = ENDPOINT + "?" + params.Encode()
 
             // Make request
             if debugMode {
