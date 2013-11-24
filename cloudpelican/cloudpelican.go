@@ -127,10 +127,10 @@ func backendWriter() {
             for k, _ := range fields {
                 if k == "__token__" {
                     // Token
-                    urlParams.Add("t", params[k]);
+                    urlParams.Add("t", fields[k]);
                 } else {
                     // Field
-                    urlParams.Add("f[" + currentEventCount + "][" + k + "]", params[k]);
+                    urlParams.Add("f[" + strconv.Itoa(currentEventCount) + "][" + k + "]", fields[k]);
                 }
             }
 
