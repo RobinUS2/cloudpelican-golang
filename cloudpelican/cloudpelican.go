@@ -20,7 +20,7 @@ var ENDPOINT string = "https://app.cloudpelican.com/api"
 var TOKEN string = ""
 var backendTimeout = time.Duration(5 * time.Second)
 var debugMode bool = false
-var maxBulkSize int = 100
+var maxBulkSize uint64 = uint64(100)
 
 // Monitor drain status
 var startCounter uint64 = uint64(0)
@@ -143,7 +143,7 @@ func backendWriter() {
                     urlParams.Add("t", fields[k]);
                 } else {
                     // Field
-                    urlParams.Add("f[" + strconv.Itoa(currentEventCount) + "][" + k + "]", fields[k]);
+                    urlParams.Add("f[" + strconv.FormatUint(currentEventCount, 10) + "][" + k + "]", fields[k]);
                 }
             }
 
