@@ -113,19 +113,30 @@ func backendWriter() {
         httpclient := &http.Client{Transport: transport}
 
         // Wait for messages
+        var urlParams url.Values = nil
         for {
             // Read from channel
             var params url.Values
             params = <- writeAhead
 
-            var url string = ENDPOINT + "/push/pixel?" + params.Encode()
+            // Populate url params
+            urlParams = params
+
+            // Queue length
+            var qLen = len(writeAhead)
+            if qLen > 0 {
+                // There is more in the current queue, bulk request
+            }
+
+            // Assemble url
+            var url string = ENDPOINT + "/push/bulk"
 
             // Make request
             if debugMode {
-                log.Printf("Write ahead queue %d\n", len(writeAhead))
+                log.Printf("Write ahead queue %d\n", qLen)
                 log.Println(url)
             }
-            resp, err := httpclient.Get(url)
+            resp, err := httpclient.PostForm(url, urlParams)
             if err != nil {
                 log.Printf("Error while forwarding data: %s\n", err)
             } else {
