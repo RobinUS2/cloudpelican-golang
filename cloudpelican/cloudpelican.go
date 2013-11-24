@@ -122,8 +122,8 @@ func backendWriter() {
             fields = <- writeAhead
 
             // Populate url params
-            if urlParams == nil {
-                urlParams := url.Values{}
+            if currentEventCount == 0 {
+                urlParams = url.Values{}
             }
             for k, _ := range fields {
                 if k == "__token__" {
@@ -160,6 +160,9 @@ func backendWriter() {
             doneCounterMux.Lock()
             doneCounter++
             doneCounterMux.Unlock()
+
+            // Reset event count
+            currentEventCount = 0
         }
         log.Printf("Stopping backend writer")
     }()
