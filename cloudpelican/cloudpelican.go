@@ -60,7 +60,7 @@ func SetDebugMode(b bool) {
 // Write a message
 func LogMessage(msg string) bool {
     // Create fields map
-    params := make map[string]string
+    params := make(map[string]string)
     params["__token__"] = TOKEN
     params["msg"] = msg
 
