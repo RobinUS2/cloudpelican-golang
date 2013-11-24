@@ -15,7 +15,7 @@ import (
 )
 
 // Settings
-var ENDPOINT string = "https://app.cloudpelican.com/api/push/pixel"
+var ENDPOINT string = "https://app.cloudpelican.com/api"
 var TOKEN string = ""
 var backendTimeout = time.Duration(5 * time.Second)
 var debugMode = false
@@ -118,7 +118,7 @@ func backendWriter() {
             var params url.Values
             params = <- writeAhead
 
-            var url string = ENDPOINT + "?" + params.Encode()
+            var url string = ENDPOINT + "/push/pixel?" + params.Encode()
 
             // Make request
             if debugMode {
