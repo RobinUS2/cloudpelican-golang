@@ -136,6 +136,9 @@ func backendWriter() {
                 }
             }
 
+            // Increase current count
+            currentEventCount++
+
             // Queue length
             var qLen = len(writeAhead)
             if qLen > 0 && currentEventCount < maxBulkSize {
