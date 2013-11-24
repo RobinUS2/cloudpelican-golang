@@ -114,7 +114,7 @@ func backendWriter() {
         httpclient := &http.Client{Transport: transport}
 
         // Wait for messages
-        var urlParams url.Values = nil
+        var urlParams url.Values
         var currentEventCount int = 0
         for {
             // Read from channel
