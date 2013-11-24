@@ -174,7 +174,7 @@ func backendWriter() {
 
             // Done counter
             doneCounterMux.Lock()
-            doneCounter++
+            doneCounter += currentEventCount
             doneCounterMux.Unlock()
 
             // Reset event count
