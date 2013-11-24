@@ -21,7 +21,6 @@ var backendTimeout = time.Duration(5 * time.Second)
 var debugMode = false
 
 // Monitor drain status
-var routineQuit chan int = make(chan int)
 var startCounter uint64 = uint64(0)
 var startCounterMux sync.Mutex
 var doneCounter uint64 = uint64(0)
@@ -29,7 +28,7 @@ var doneCounterMux sync.Mutex
 
 // Log queue
 var writeAheadBufferSize int = 1000
-var writeAhead chan string = make(chan string, writeAheadBufferSize)
+var writeAhead chan string = make(chan url.Values, writeAheadBufferSize)
 var writeAheadInit bool
 var dropOnFullWriteAheadBuffer bool = true
 
@@ -59,50 +58,18 @@ func SetDebugMode(b bool) {
 }
 
 // Write a message
-func LogMessageWithToken(t string, msg string) bool {
-    // Create fields map
-    var fields map[string]string = make(map[string]string)
-    fields["msg"] = msg
-
-    // Push to channel
-    return requestAsync(assembleUrl(t, fields))
-}
-
-// Write a message
 func LogMessage(msg string) bool {
     // Create fields map
-    var fields map[string]string = make(map[string]string)
-    fields["msg"] = msg
+    params := url.Values{}
+    params.Add("t", TOKEN)
+    params.Add("f[msg]", msg)
 
     // Push to channel
-    return requestAsync(assembleUrl(TOKEN, fields))
-}
-
-// Assemble url
-// @return string Url based on the input fields
-func assembleUrl(t string, fields map[string]string) string {
-    // Token check
-    validateToken(t)
-
-    // Baisc query params
-    params := url.Values{}
-    params.Add("t", t)
-
-    // Fields
-    for k, _ := range fields {
-        if len(k) == 0 || len(fields[k]) == 0 {
-            log.Printf("Skipping invalid field %s with value %s", k, fields[k])
-            continue
-        }
-        params.Add("f[" + k + "]", fields[k])
-    }
-
-    // Final url
-    return ENDPOINT + "?" + params.Encode()
+    return requestAsync(params)
 }
 
 // Request async
-func requestAsync(url string) bool {
+func requestAsync(params url.Values) bool {
     // Check amount of open items in the channel, if the channel is full, return false and drop this message
     if dropOnFullWriteAheadBuffer {
         var lwa int = len(writeAhead)
@@ -123,7 +90,7 @@ func requestAsync(url string) bool {
     }
 
     // Insert into channel
-    writeAhead <- url
+    writeAhead <- params
 
     // OK
     return true
@@ -148,8 +115,10 @@ func backendWriter() {
         // Wait for messages
         for {
             // Read from channel
-            var url string
-            url = <- writeAhead
+            var params url.Values
+            params = <- writeAhead
+
+            var url string := ENDPOINT + "?" + params.Encode()
 
             // Make request
             if debugMode {
