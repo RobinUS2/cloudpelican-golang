@@ -1,6 +1,7 @@
 package cloudpelican
 
 // @author Robin Verlangen
+// @todo Support bulk index requests
 // Tool for logging data to CloudPelican directly from Go
 
 // Imports
