@@ -28,7 +28,7 @@ var startCounterMux sync.Mutex
 var doneCounter uint64 = uint64(0)
 var doneCounterMux sync.Mutex
 var isDraining bool = false
-var drained := make(chan bool); 
+var drained = make(chan bool); 
 
 // Log queue
 var writeAheadBufferSize int = 1000

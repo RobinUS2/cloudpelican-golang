@@ -40,5 +40,5 @@ func main() {
     }
 
     // Sleep
-    time.Sleep(1000 * time.Millisecond)
+    cloudpelican.Drain()
 }
