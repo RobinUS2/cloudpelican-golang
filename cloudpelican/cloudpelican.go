@@ -61,8 +61,8 @@ func SetDebugMode(b bool) {
 func LogMessage(msg string) bool {
     // Create fields map
     params := url.Values{}
-    params.Add("t", TOKEN)
-    params.Add("f[msg]", msg)
+    params.Add("__token__", TOKEN)
+    params.Add("msg", msg)
 
     // Push to channel
     return requestAsync(params)
@@ -114,13 +114,25 @@ func backendWriter() {
 
         // Wait for messages
         var urlParams url.Values = nil
+        var currentEventCount int = 0
         for {
             // Read from channel
             var params url.Values
             params = <- writeAhead
 
             // Populate url params
-            urlParams = params
+            if urlParams == nil {
+                urlParams := url.Values{}
+            }
+            for k, _ := range params {
+                if k == "__token__" {
+                    // Token
+                    urlParams.Add("t", params[k]);
+                } else {
+                    // Field
+                    urlParams.Add("f[" + currentEventCount + "][" + k + "]", params[k]);
+                }
+            }
 
             // Queue length
             var qLen = len(writeAhead)
@@ -134,7 +146,7 @@ func backendWriter() {
             // Make request
             if debugMode {
                 log.Printf("Write ahead queue %d\n", qLen)
-                log.Println(url)
+                log.Println(urlParams.Encode())
             }
             resp, err := httpclient.PostForm(url, urlParams)
             if err != nil {
