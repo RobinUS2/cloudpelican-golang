@@ -14,8 +14,7 @@ import (
 // Example
 func main() {
     // Token
-    cloudpelican.SetToken("EIg8WOP5Mtr7pyeNappk7uwgN0k4UZzr")
-    cloudpelican.SetEndpoint("https://appdev.cloudpelican.com/api")
+    cloudpelican.SetToken("12345")
 
     // More verbose
     cloudpelican.SetDebugMode(true)
@@ -26,7 +25,7 @@ func main() {
     var msg string = "This is a log message %d"
 
     // Write message and validate
-    for i := 0; i < 1000; i++ {
+    for i := 0; i < 10; i++ {
         // Basic message with a sequence number for esting purposes
         parsedMsg := fmt.Sprintf(msg, i)
         res := cloudpelican.LogMessage(parsedMsg)
