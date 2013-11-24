@@ -26,7 +26,7 @@ func main() {
     var msg string = "This is a log message %d"
 
     // Write message and validate
-    for i := 0; i < 10; i++ {
+    for i := 0; i < 1000; i++ {
         // Basic message with a sequence number for esting purposes
         parsedMsg := fmt.Sprintf(msg, i)
         res := cloudpelican.LogMessage(parsedMsg)

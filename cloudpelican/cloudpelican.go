@@ -27,6 +27,8 @@ var startCounter uint64 = uint64(0)
 var startCounterMux sync.Mutex
 var doneCounter uint64 = uint64(0)
 var doneCounterMux sync.Mutex
+var isDraining bool = false
+var drained := make(chan bool); 
 
 // Log queue
 var writeAheadBufferSize int = 1000
@@ -57,6 +59,15 @@ func SetBackendTimeout(to time.Duration) {
 // Debug
 func SetDebugMode(b bool) {
     debugMode = b
+}
+
+// Drain
+func Drain() {
+    isDraining = true
+    if startCounter > doneCounter {
+        // Wait for signal
+        <- drained
+    }
 }
 
 // Write a message
@@ -168,6 +179,12 @@ func backendWriter() {
 
             // Reset event count
             currentEventCount = 0
+
+            // Are we draining the system?
+            if isDraining && doneCount >= startCounter {
+                // Flag the drained channel
+                drained <- true
+            }
         }
         log.Printf("Stopping backend writer")
     }()
