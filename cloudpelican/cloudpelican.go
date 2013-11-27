@@ -22,6 +22,7 @@ var TOKEN string = ""
 var backendTimeout = time.Duration(5 * time.Second)
 var debugMode bool = false
 var maxBulkSize uint64 = uint64(100)
+var hostname string
 
 // Monitor drain status
 var startCounter uint64 = uint64(0)
