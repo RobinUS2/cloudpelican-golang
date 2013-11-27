@@ -11,7 +11,6 @@ import (
     "net/url"
     "log"
     "sync"
-    "time"
     "strconv"
     "os"
     "fmt"
@@ -87,11 +86,7 @@ func LogMessage(msg string) bool {
 
 // Current time
 func getTimeString() string {
-    time := time.Now()
-    now := time.Nanoseconds()
-    localTime := time.SecondsToLocalTime(now/1e9)
-    miliSeconds := (now % 1e9) / 1e6
-    return fmt.Sprintf("%04d-%02d-%02d %02d:%02d:%02d.%03d", localTime.Year, localTime.Month, localTime.Day, localTime.Hour, localTime.Minute, localTime.Second, miliSeconds)
+    return fmt.Sprintf("%d", int32(time.Now().Unix()) * int32(1000))
 }
 
 // Request async
