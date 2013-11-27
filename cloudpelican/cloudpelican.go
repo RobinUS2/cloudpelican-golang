@@ -87,7 +87,7 @@ func LogMessage(msg string) bool {
 
 // Current time
 func getTimeString() string {
-    return fmt.Sprintf("%d", int32(time.Now().Unix()) * int32(1000))
+    return fmt.Sprintf("%d", int64(time.Now().Unix()) * int64(1000))
 }
 
 // Request async
