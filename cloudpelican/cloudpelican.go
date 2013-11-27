@@ -14,6 +14,7 @@ import (
     "time"
     "strconv"
     "os"
+    "fmt"
 )
 
 // Settings
@@ -86,6 +87,7 @@ func LogMessage(msg string) bool {
 
 // Current time
 func getTimeString() string {
+    time := time.Now()
     now := time.Nanoseconds()
     localTime := time.SecondsToLocalTime(now/1e9)
     miliSeconds := (now % 1e9) / 1e6
