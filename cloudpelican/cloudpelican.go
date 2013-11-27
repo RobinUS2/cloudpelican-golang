@@ -13,6 +13,7 @@ import (
     "sync"
     "time"
     "strconv"
+    "os"
 )
 
 // Settings
@@ -109,8 +110,19 @@ func requestAsync(params map[string]string) bool {
     return true
 }
 
+// Get hostname of this system
+func getHostname() string {
+    // Hostname
+    name, err := os.Hostname()
+    if err != nil {
+        return ""
+    }
+    return name 
+}
+
 // Backend writer
 func backendWriter() {
+    hostname = getHostname()
     go func() {
         // Client
         transport := &http.Transport{
@@ -145,6 +157,11 @@ func backendWriter() {
                     // Field
                     urlParams.Add("f[" + strconv.FormatUint(currentEventCount, 10) + "][" + k + "]", fields[k]);
                 }
+            }
+
+            // Host
+            if len(hostname) > 0 {
+                urlParams.Add("f[" + strconv.FormatUint(currentEventCount, 10) + "][host]", hostname);
             }
 
             // Increase current count
