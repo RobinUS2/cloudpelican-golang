@@ -78,9 +78,18 @@ func LogMessage(msg string) bool {
     params := make(map[string]string)
     params["__token__"] = TOKEN
     params["msg"] = msg
+    params["dt"] = getTimeString()
 
     // Push to channel
     return requestAsync(params)
+}
+
+// Current time
+func getTimeString() string {
+    now := time.Nanoseconds()
+    localTime := time.SecondsToLocalTime(now/1e9)
+    miliSeconds := (now % 1e9) / 1e6
+    return fmt.Sprintf("%04d-%02d-%02d %02d:%02d:%02d.%03d", localTime.Year, localTime.Month, localTime.Day, localTime.Hour, localTime.Minute, localTime.Second, miliSeconds)
 }
 
 // Request async
