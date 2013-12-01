@@ -18,7 +18,7 @@ import (
 )
 
 // Settings
-var ENDPOINT string = "https://app.cloudpelican.com/api"
+var ENDPOINT string = "https://api.cloudpelican.com/api"
 var TOKEN string = ""
 var backendTimeout = time.Duration(5 * time.Second)
 var debugMode bool = false
