@@ -1,7 +1,6 @@
 package cloudpelican
 
 // @author Robin Verlangen
-// @todo Support bulk index requests
 // Tool for logging data to CloudPelican directly from Go
 
 // Imports
@@ -18,8 +17,8 @@ import (
 )
 
 // Settings
+var TOKEN string = "" // Put your API token here
 var ENDPOINT string = "https://api.cloudpelican.com/api"
-var TOKEN string = ""
 var backendTimeout = time.Duration(5 * time.Second)
 var debugMode bool = false
 var maxBulkSize uint64 = uint64(100)
